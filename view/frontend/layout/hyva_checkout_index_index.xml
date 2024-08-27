@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="head.additional">
+            <block class="Magento\Framework\View\Element\Template"
+                   name="Postcode-nl.js.checkout"
+                   template="Elgentos_HyvaCheckoutFlektoPostcode::checkout/page/js/postcode-eu-library.phtml" />
+        </referenceBlock>
+
+        <referenceBlock name="entity-form.field-renderers">
+            <block name="form-field.street" as="street" template="Elgentos_HyvaCheckoutFlektoPostcode::form/field/street.phtml"/>
+
+            <block name="form-field.postcode" as="postcode">
+
+            </block>
+
+            <block name="form-field.street.1" as="street.1">
+                <block name="form-field.street.1.loading-indicator" as="after" template="Elgentos_HyvaCheckoutFlektoPostcode::form/field/loading-indicator.phtml"/>
+            </block>
+
+            <block name="form-field.street.2" as="street.2">
+                <block name="form-field.street.2.loading-indicator" as="after" template="Elgentos_HyvaCheckoutFlektoPostcode::form/field/loading-indicator.phtml"/>
+            </block>
+
+            <block name="form-field.postcode_eu_address_auto_complete.address"
+                   as="aac_query"
+                   template="Elgentos_HyvaCheckoutFlektoPostcode::form/field/address-auto-complete.phtml"
+            >
+                <block name="component-messenger-address-auto-complete"
+                       as="messenger"
+                       template="Hyva_Checkout::page/messenger.phtml"
+                >
+                    <arguments>
+                        <argument name="event_prefix" xsi:type="string">address:auto-complete</argument>
+                    </arguments>
+                </block>
+            </block>
+        </referenceBlock>
+
+        <referenceContainer name="before.body.end">
+            <block name="checkout.address-auto-complete-js"
+                   template="Elgentos_HyvaCheckoutFlektoPostcode::checkout/page/js/address-auto-complete-js.phtml"
+            />
+        </referenceContainer>
+
+        <referenceContainer name="hyva.checkout.api-v1.after">
+            <block name="hyva.checkout.postcode-eu-autocomplete"
+                   template="Elgentos_HyvaCheckoutFlektoPostcode::checkout/page/js/postcode-eu-autocomplete.phtml"
+            />
+        </referenceContainer>
+    </body>
+</page>

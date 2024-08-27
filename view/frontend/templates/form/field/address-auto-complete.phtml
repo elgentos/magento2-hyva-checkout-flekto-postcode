@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2023-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Checkout\Model\Form\EntityFieldInterface;
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Hyva\Checkout\ViewModel\Checkout\AddressRenderer;
+
+/** @var Template $block */
+/** @var EntityFieldInterface $postcodeElement */
+/** @var ViewModelRegistry $viewModels */
+/** @var Escaper $escaper */
+/** @var HeroiconsOutline $iconsViewModel */
+/** @var AddressRenderer $addressRenderer */
+/** @var HeroiconsOutline $iconsViewModel */
+
+$element = $block->getData('element');
+$form = $element->getForm();
+
+$addressRenderer = $viewModels->require(AddressRenderer::class);
+$iconsViewModel = $viewModels->require(HeroiconsOutline::class);
+
+$element->setAttribute('x-ref', 'postcode-eu-autocomplete');
+$element->removeAttributesStartingWith('wire');
+
+?>
+
+<div x-data="postcodeEUAddressAutoComplete($wire, { form: { namespace: '<?= $escaper->escapeJs($form->getNamespace()) ?>' } })"
+     class="w-full font-medium text-gray-700 <?= /* @noEscape */ $element->isRequired() ? 'required' : 'not-required' ?>"
+     wire:key="postcode_eu_auto_complete_<?= $escaper->escapeHtmlAttr($form->getNamespace()) ?>"
+     x-init="initialize()"
+>
+    <?= /* @noEscape */ $element->getRenderer()->renderLabel($element) ?>
+    <?= /* @noEscape */ $element->getRenderer()->renderBefore($element) ?>
+
+    <div class="relative flex items-center gap-4">
+        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <?= $iconsViewModel->searchHtml('', 20, 20, ['aria-hidden' => 'true']); ?>
+        </div>
+
+        <input class="<?= $escaper->escapeHtmlAttr($element->renderClass(['block w-full form-input grow renderer-text py-1.5 !pl-10'])) ?>"
+               placeholder="<?= $escaper->escapeHtmlAttr(__('Enter a location')) ?>"
+            <?php if ($element->hasAttributes()) : ?>
+                <?= /* @noEscape */ $element->renderAttributes($escaper) ?>
+            <?php endif ?>
+        />
+
+        <?php if ($element->hasTooltip()) : ?>
+            <?= /* @noEscape */ $element->getRenderer()->renderTooltip($element) ?>
+        <?php endif ?>
+    </div>
+
+    <?= /* @noEscape */ $element->getRenderer()->renderComment($element) ?>
+    <?= /* @noEscape */ $element->getRenderer()->renderAfter($element) ?>
+</div>

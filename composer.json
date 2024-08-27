@@ -1,0 +1,21 @@
+{
+  "name": "elgentos/module-hyva-checkout-flekto-postcode",
+  "version": "1.0.0",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "magento/framework": "*",
+    "postcode-nl/api-magento2-module": "3.2.*"
+  },
+  "license": [
+    "Proprietary"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Elgentos\\HyvaCheckoutFlektoPostcode\\": ""
+    }
+  }
+}

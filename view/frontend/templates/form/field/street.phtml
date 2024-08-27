@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+/** @var Template $block */
+/** @var EntityFieldInterface $element */
+/** @var ViewModelRegistry $viewModels */
+/** @var Escaper $escaper */
+/** @var MagewireFormComponent $magewire */
+
+use Hyva\Checkout\Model\Form\EntityFieldInterface;
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Magewirephp\Magewire\Component\Form as MagewireFormComponent;
+
+$element = $block->getData('element');
+$attributes = $element->getAttributes();
+?>
+<div class="w-full font-medium text-gray-700 <?= /* @noEscape */ $element->isRequired() ? 'required' : 'not-required' ?>">
+    <?= /* @noEscape */ $element->getRenderer()->renderLabel($element) ?>
+    <?= /* @noEscape */ $element->getRenderer()->renderBefore($element) ?>
+
+    <div class="flex items-center gap-4">
+        <input class="<?= $escaper->escapeHtmlAttr($element->renderClass(['block w-full form-input grow renderer-text'])) ?>"
+            <?php if ($element->hasAttributes()) : ?>
+                <?= /* @noEscape */ $element->renderAttributes($escaper) ?>
+            <?php endif ?>
+        />
+
+        <?php if ($element->hasTooltip()) : ?>
+            <?= /* @noEscape */ $element->getRenderer()->renderTooltip($element) ?>
+        <?php endif ?>
+    </div>
+
+    <?= /* @noEscape */ $element->getRenderer()->renderAfter($element) ?>
+</div>

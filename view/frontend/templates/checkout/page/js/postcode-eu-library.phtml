@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2023-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Elgentos\HyvaCheckoutFlektoPostcode\ViewModel\AutoComplete;
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+/** @var AutoComplete $autoComplete */
+
+$autoComplete = $viewModels->require(AutoComplete::class);
+?>
+
+<?php if ($autoComplete->isPostcodeNLEnabled()) : ?>
+    <script type="module"
+            src="<?= $escaper->escapeUrl($block->getViewFileUrl("Elgentos_HyvaCheckoutFlektoPostcode::js/AutocompleteAddress.min.js")) ?>"
+            defer
+    ></script>
+<?php endif ?>

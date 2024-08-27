@@ -1,0 +1,121 @@
+<?php
+
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2023-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\Escaper;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+?>
+
+<script>
+    function postcodeEUAddressAutoComplete(wire, options = {}) {
+        options = Object.assign({
+            'form': {
+                'namespace': null
+            },
+            alpine: {
+                'field-ref': 'postcode-eu-autocomplete'
+            }
+        }, options)
+
+        return {
+            initialize: function() {
+                if (options.form.namespace) {
+                    try {
+                        if (PostcodeNl) {
+                            this.bindAddressField();
+                        }
+                    } catch (exception) {
+                        console.log(exception);
+                    }
+                }
+            },
+            bindAddressField() {
+                const formElement = this.$refs[options.alpine['field-ref']]
+
+                const autocomplete = new PostcodeNl.AutocompleteAddress(formElement, {
+                    autocompleteUrl: BASE_URL.split('?')[0] + 'postcode-eu/V1/international/autocomplete',
+                    addressDetailsUrl: BASE_URL.split('?')[0] + 'postcode-eu/V1/international/address',
+                    context: wire.address.country_id
+                });
+
+                <?php
+                /**
+                 * Due to there being differences within the PostocdeEU API for different countries,
+                 * We need to introduce a province map, The details for this map can be found here:
+                 *
+                 * https://developer.postcode.eu/documentation/international/country-details/GBR
+                 *
+                 * The empty countries are the ones that the API does not provide a State/Province for
+                 */
+                ?>
+                const provinceMappings = {
+                    BEL: (data) => data.details.belProvince?.primaryName ?? '',
+                    NLD: (data) => data.details.nldProvince?.name ?? '',
+                    DNK: (data) => data.details.dnkAdditionalCity?.name ?? '',
+                    DEU: (data) => data.details.deuFederalState?.name ?? '',
+                    ESP: (data) => data.details.espProvince?.name ?? '',
+                    GBR: () => '',
+                    AUT: () => '',
+                    FRA: () => '',
+                    LUX: () => '',
+                    CHE: () => '',
+                    <?php
+                        /** Add mappings for other countries as needed, above is all the currently supported countries. */
+                    ?>
+                };
+
+                formElement.addEventListener('autocomplete-select', function (e) {
+                    if (e.detail.precision === 'Address') {
+                        autocomplete.getDetails(e.detail.context, function (result) {
+                            if (result && result.length > 0 && result[0].address) {
+                                const address = result[0].address;
+                                const countryIso = result[0].country.iso3Code;
+
+                                if (provinceMappings.hasOwnProperty(countryIso)) {
+                                    address.province = provinceMappings[countryIso](result[0]);
+                                }
+
+                                wire.sync('address.aac_query', JSON.stringify(address));
+
+                                if(e.target !== document.getElementById('billing-aac_query')) {
+                                    window.dispatchEvent(
+                                        new CustomEvent('postcode:updated',
+                                            {
+                                                detail: {
+                                                    'postcode': wire.address.postcode,
+                                                    'country': wire.address.country_id
+                                                }
+                                            }
+                                        )
+                                    );
+                                }
+                            } else {
+                                console.error('Address details not found.');
+                            }
+                        });
+                    }
+                });
+
+                Magewire.hook('message.received', (message, component) => {
+                    if (component.id === wire.__instance.id) {
+                        autocomplete.setCountry(message.response.serverMemo.data.address.country_id);
+                    }
+                })
+
+                autocomplete.reset();
+            }
+        }
+    }
+</script>

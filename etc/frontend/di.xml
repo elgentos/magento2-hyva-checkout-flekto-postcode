@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd"
+>
+    <preference for="Hyva\Checkout\Model\Form\EntityField\EavEntityAddress\StreetAttributeField" type="Elgentos\HyvaCheckoutFlektoPostcode\Model\HyvaCheckout\Form\EntityField\EavEntityAddress\StreetAttributeField"/>
+
+    <type name="Hyva\Checkout\Model\ConfigData\HyvaThemes\Checkout">
+        <plugin name="elgentos_hyvacheckoutflektopostcode_sort_checkout_form_fields" type="Elgentos\HyvaCheckoutFlektoPostcode\Plugin\SortCheckFormFields"/>
+    </type>
+
+    <type name="Hyva\Checkout\Model\Form\EntityFormFactory">
+        <arguments>
+            <argument name="elements" xsi:type="array">
+                <item name="postcode_manual" xsi:type="string">
+                    Elgentos\HyvaCheckoutFlektoPostcode\Model\HyvaCheckout\Form\EntityField\EavEntityAddress\ManualAttributeField
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Elgentos\HyvaCheckoutFlektoPostcode\Model\AddressAutoCompleteServiceAdapter\PostcodeNL">
+        <arguments>
+            <argument name="entityFormModifiers" xsi:type="array">
+                <item name="with_europe_free_input" xsi:type="object">Elgentos\HyvaCheckoutFlektoPostcode\Model\HyvaCheckout\Form\EntityFormModifier\PostcodeEU\WithEuropeFreeInput</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Hyva\Checkout\Model\Form\EntityForm\EavAttributeShippingAddressForm">
+        <arguments>
+            <argument name="entityFormModifiers" xsi:type="array">
+                <item name="with_dutch_postcode_house_number_combination" xsi:type="object">Elgentos\HyvaCheckoutFlektoPostcode\Model\HyvaCheckout\Form\EntityFormModifier\PostcodeNL\WithDutchPostcodeHouseNumberCombination</item>
+                <item name="with_wire_target_fix" sortOrder="501" xsi:type="object">Elgentos\HyvaCheckoutFlektoPostcode\Model\HyvaCheckout\Form\EntityFormModifier\PostcodeNL\WithWireTargetFixModifier</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Hyva\Checkout\Model\Form\EntityForm\EavAttributeBillingAddressForm">
+        <arguments>
+            <argument name="entityFormModifiers" xsi:type="array">
+                <item name="with_dutch_postcode_house_number_combination" xsi:type="object">Elgentos\HyvaCheckoutFlektoPostcode\Model\HyvaCheckout\Form\EntityFormModifier\PostcodeNL\WithDutchPostcodeHouseNumberCombination</item>
+                <item name="with_wire_target_fix" sortOrder="501" xsi:type="object">Elgentos\HyvaCheckoutFlektoPostcode\Model\HyvaCheckout\Form\EntityFormModifier\PostcodeNL\WithWireTargetFixModifier</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

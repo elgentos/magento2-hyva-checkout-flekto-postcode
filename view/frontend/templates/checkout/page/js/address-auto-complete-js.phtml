@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2023-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var ViewModelRegistry $viewModels */
+/** @var Escaper $escaper */
+?>
+<script>
+    document.addEventListener('address-form-modal-show', (event) => {
+        <?php
+        /**
+         * This fix targets a specific issue encountered by logged-in customers when opening a modal.
+         * The issue involves errors related to clickable targets.
+         * By removing the original click event listener and replacing it with a new one,
+         * We ensure that the error is mitigated. Specifically, the new listener checks if the clicked element
+         * Belongs to a class prefixed with "postcodenl-autocomplete-item".
+         */
+        ?>
+        (function () {
+            const originalListener = window.hyva.modal.eventListeners.click;
+
+            document.removeEventListener('click', originalListener);
+
+            window.hyva.modal.eventListeners.click = event => {
+                const clickedElement = event.target;
+
+                if (!clickedElement.classList.value.match(/\bpostcodenl-autocomplete-item\b/)) {
+                    originalListener(event);
+                }
+            };
+
+            document.addEventListener('click', window.hyva.modal.eventListeners.click);
+        })();
+    });
+</script>
